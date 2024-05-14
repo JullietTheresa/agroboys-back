@@ -4,6 +4,7 @@ const app = express();
 const PORT = 3000;
 
 // Dados temporarios
+let DadosRegiao = []
 let cidadeTemporaria; // Variável para armazenar temporariamente a cidade
 
 
@@ -54,16 +55,22 @@ app.put('/', (req, res) => {
 
 // Recebe a Cidade da HomePage
   app.post('/confirmaestado', (req, res) => {
-    const { cidade } = req.body;
-    console.log('Cidade recebida do frontend:', cidade);
-    cidadeTemporaria = cidade; // Armazenar temporariamente a cidade
-    console.log("Cidade temporaria armazenada:", cidadeTemporaria)
+    const { cidade, regiao, bioma } = req.body;
+    console.log('Dados recebidos do frontend:', cidade, regiao, bioma);
+    DadosRegiao = []
+    // Adiciona os dados à lista DadosRegião
+    DadosRegiao.push({ cidade, regiao, bioma });
+    
+    // Exibe a lista atualizada
+    console.log('Dados na lista DadosRegião:', DadosRegiao);
+
+    // Resposta ao frontend
     res.send('Cidade recebida e armazenada com sucesso pelo backend');
 });
 
 // Envia a cidade temporaria
-app.get('/cidadearmazenada', (req, res) => {
-    res.send({ cidade: cidadeTemporaria });
+app.get('/dadosestado', (req, res) => {
+    res.send({ cidade: DadosRegiao[0], regiao: DadosRegiao[1], bioma: DadosRegiao[2] });
 });
 
 
