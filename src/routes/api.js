@@ -11,5 +11,6 @@ router.get('/', (req, res) => {
 router.post('/confirmaestado', DadosRegiao.confirmaEstado);
 router.get('/dadosestado', DadosRegiao.dadosEstado);
 router.post('/salvaSignup', DadosUsuario.salvaSignup);
+router.post('/verificaLogin', DadosUsuario.verificaLogin);
 
 module.exports = router;

@@ -19,17 +19,33 @@ exports.salvaSignup = (req, res) => {
 };
 
 exports.verificaLogin = (req, res) => {
-    const {email, password} = req.body;
-    console.log(`Email: ${email} Senha: ${password}`)
-    const usuarioLogin = DadosSignup.find((usuario) => usuario.email === email && usuario.password === password);
-    if (usuarioLogin) {
-        // Usuario está salvo
-        console.log("Usuario encontrado")
-        return "?"
+    const { email, password } = req.body;
+
+    // Validar os dados recebidos
+    if (!email || !password) {
+        console.log("Nenhum dado foi recebido na tentativa de login")
+        return res.status(400).json({ error: "Email e senha são obrigatórios." });
     }
 
-    // Usuario não encontrado
-    console.log("Usuario não encontrado no BD")
+    console.log(`Tentativa de login - Email: ${email}`);
 
-    return "?"
-}
+    // Buscar o usuário no banco de dados
+    const usuarioLogin = DadosSignup.find(usuario => usuario.email === email);
+
+    // Se o usuário não for encontrado
+    if (!usuarioLogin) {
+        console.log("Usuário não encontrado no BD");
+        return res.status(401).json({ error: "Email ou senha incorretos." });
+    }
+
+    // Verificar a senha
+    if (usuarioLogin.password !== password) {
+        console.log("Senha incorreta para o usuário encontrado");
+        return res.status(401).json({ error: "Email ou senha incorretos." });
+    }
+
+    // Se o login for bem-sucedido
+    console.log("Usuário encontrado e senha correta");
+    return res.status(200).json({ message: "Login bem-sucedido" });
+};
+
