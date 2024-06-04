@@ -5,6 +5,7 @@ const DadosRegiao = require('../Controllers/Regiao/Regiao');
 const DadosUsuario = require('../Controllers/Usuario/autentica')
 const DadosCultura = require('../Controllers/selecao_cultura/cultura');
 const DadosSolo = require('../Controllers/Solo/VerificaFormulario');
+const DadosControle = require('../Controllers/Controle/controle');
 
 router.get('/', (req, res) => {
     res.send("API GET");
@@ -18,5 +19,7 @@ router.post('/selecao_cultura', DadosCultura.selecao_cultura);
 router.get('/VerificaFormulario', DadosSolo.VerificaFormulario);
 router.post('/SalvaFormulario', DadosSolo.SalvaFormulario);
 router.get('/EnviarDadosSolo', DadosSolo.EnviarDadosSolo);
+
+router.post('/controle', DadosControle.createTask)
 
 module.exports = router;
