@@ -21,5 +21,6 @@ router.post('/SalvaFormulario', DadosSolo.SalvaFormulario);
 router.get('/EnviarDadosSolo', DadosSolo.EnviarDadosSolo);
 
 router.post('/controle', DadosControle.createTask)
+router.get('/controleGet'), DadosControle.getTasks
 
 module.exports = router;

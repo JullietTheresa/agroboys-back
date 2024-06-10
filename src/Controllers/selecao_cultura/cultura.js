@@ -1,20 +1,24 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-
-const app = express();
-
-app.use(cors());
-app.use(bodyParser.json());
+const conexao = require('../../db');
 
 exports.selecao_cultura = (req, res) => {
   const selectedCulture = req.body;
   console.log('Selected culture received:', selectedCulture);
-  
-  // Aqui você pode adicionar lógica para processar ou armazenar a cultura selecionada.
-  // Por exemplo, salvar em um banco de dados.
 
-  res.status(200).json({ message: 'Cultura selecionada com sucesso!', selectedCulture });
+  const nomeCultura = selectedCulture.name;
+  const nomeImagem = selectedCulture.image;
+  const descricao = selectedCulture.description;
+
+  console.log('Dados salvos:', nomeCultura, nomeImagem, descricao);
+  // Inserir dados no banco de dados
+  const query = 'INSERT INTO tb_cultura (nomeCultura, nomeImagem, descricao) VALUES (?, ?, ?)';
+  conexao.query(query, [nomeCultura, nomeImagem, descricao], (error, results) => {
+      if (error) {
+          console.error('Erro ao salvar cultura:', error);
+          return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+      console.log('Cultura armazenada com sucesso:', { nomeCultura, nomeImagem, descricao });
+      res.status(200).json({ message: 'Cultura selecionada com sucesso!', selectedCulture: { nomeCultura, nomeImagem, descricao } });
+  });
 };
 
 

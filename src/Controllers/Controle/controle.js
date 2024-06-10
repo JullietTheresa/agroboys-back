@@ -15,3 +15,7 @@ exports.createTask = (req, res) => {
   console.log(tasks)
   return res.status(201).json({ message: 'Tarefa criada com sucesso.', task: newTask });
 };
+
+exports.getTasks = (req, res) => {
+    return res.status(200).json(tasks);
+  };
