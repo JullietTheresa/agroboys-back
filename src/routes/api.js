@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const DadosRegiao = require('../Controllers/Regiao/Regiao');
-const DadosUsuario = require('../Controllers/Usuario/autentica')
+const DadosUsuario = require('../Controllers/Usuario/autentica');
 const DadosCultura = require('../Controllers/selecao_cultura/cultura');
 const DadosSolo = require('../Controllers/Solo/VerificaFormulario');
 const DadosControle = require('../Controllers/Controle/controle');
@@ -25,8 +25,10 @@ router.get('/VerificaFormulario', DadosSolo.VerificaFormulario);
 router.post('/SalvaFormulario', DadosSolo.SalvaFormulario);
 router.get('/EnviarDadosSolo', DadosSolo.EnviarDadosSolo);
 
-router.post('/controle', DadosControle.createTask)
-router.get('/controleGet'), DadosControle.getTasks
+router.post('/controle', DadosControle.createTask);
+router.get('/controleGet', DadosControle.getTasks);
+router.put('/controle', DadosControle.updateTask);
+router.delete('/controle/:taskId', DadosControle.deleteTask);
 
 router.get('/GeracaoAI', AIController.Geracao);
 
