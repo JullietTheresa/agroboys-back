@@ -6,15 +6,6 @@ const conexao = require('./db');
 
 const PORT = 3000;
 
-
-app.get('/', (req, res) => {
-    let SQL = "INSERT INTO tb_estado (idEstado, nomeEstado) VALUES (1, 'Acre')" ;
-    conexao.query(SQL, (err, result)=>{
-        console.log(err);
-    })
-});
-
-
 // Middleware
 app.use(bodyParser.json());
 app.use((req, res, next) => {

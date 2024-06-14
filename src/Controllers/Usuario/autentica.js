@@ -1,4 +1,5 @@
 const conexao = require('../../db');
+const { lista } = require('./id'); // Importando a lista do arquivo data.js
 
 exports.salvaSignup = (req, res) => {
     const { cpf, email, senha } = req.body; // Supondo que os dados estejam sendo enviados via POST
@@ -23,10 +24,19 @@ exports.salvaSignup = (req, res) => {
                 console.error('Erro ao inserir usuário:', err);
                 return res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
             }
-
+            const queryDadosSolo = 'INSERT INTO tb_dadossolo () VALUES ()'
+            conexao.query(queryDadosSolo)
+    
+            const queryRegiao = 'INSERT INTO tb_regiao () VALUES ()'
+            conexao.query(queryRegiao)
+    
+            const queryCultura = 'INSERT INTO tb_cultura () VALUES ()'
+            conexao.query(queryCultura)
             console.log('Usuário cadastrado com sucesso:', results);
             return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
         });
+
+
     });
 };
 
@@ -64,7 +74,11 @@ exports.verificaLogin = (req, res) => {
 
         // Se o login for bem-sucedido
         console.log("Usuário encontrado e senha correta");
+        const id = usuario.idUsuario
+        console.log(id)
+        lista.length = 0;
+        lista.push(id)
+        console.log(lista)
         return res.status(200).json({ message: "Login bem-sucedido" });
     });
 };
-

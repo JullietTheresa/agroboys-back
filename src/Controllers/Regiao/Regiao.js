@@ -1,13 +1,20 @@
 const conexao = require('../../db');
+const { lista } = require('../Usuario/id'); // Importando a lista do arquivo data.js
 
 // Endpoint para confirmar o estado e armazenar dados no banco de dados
 exports.confirmaEstado = (req, res) => {
     const { cidade, regiao, bioma } = req.body;
     console.log('Dados recebidos do frontend:', cidade, regiao, bioma);
+    const updateEstado = `
+        UPDATE tb_regiao
+        SET cidade = ?, regiao = ?, bioma = ?
+        WHERE idRegião = ?
+        `;
+    
+    const values = [cidade, regiao, bioma, lista[0]];
 
     // Inserir dados no banco de dados
-    const query = 'INSERT INTO tb_regiao (cidade, regiao, bioma) VALUES (?, ?, ?)';
-    conexao.query(query, [cidade, regiao, bioma], (error, results) => {
+    conexao.query(updateEstado, values, (error, results) => {
         if (error) {
             console.error('Erro ao salvar dados da região:', error);
             return res.status(500).json({ error: 'Erro interno do servidor' });
@@ -20,8 +27,8 @@ exports.confirmaEstado = (req, res) => {
 // Endpoint para enviar dados do estado
 exports.dadosEstado = (req, res) => {
     // Buscar o último registro inserido na tabela tb_regiao
-    const query = 'SELECT * FROM tb_regiao ORDER BY idRegião DESC LIMIT 1';
-    conexao.query(query, (error, results) => {
+    const query = 'SELECT * FROM tb_regiao WHERE idRegião = ?';
+    conexao.query(query, lista[0], (error, results) => {
         if (error) {
             console.error('Erro ao enviar dados da região:', error);
             return res.status(500).json({ error: 'Erro interno do servidor' });

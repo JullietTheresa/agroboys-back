@@ -1,5 +1,3 @@
-let tasks = []; // Lista que funciona como banco de dados temporário
-
 // Função para criar uma nova tarefa
 exports.createTask = (req, res) => {
   const { newTaskId, titulo, descricao, detalhes } = req.body;
