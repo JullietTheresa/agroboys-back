@@ -1,15 +1,22 @@
 // Função para criar uma nova tarefa
 let tasks = [];
 
-exports.createTask = (req, res) => {
-  const { newTaskId, titulo, descricao, detalhes } = req.body;
-  console.log('Create Task:', newTaskId, titulo, descricao, detalhes);
+exports.loadTasksFromLocalStorage = () => {
+  const storedTasks = localStorage.getItem('tasks');
+  if (storedTasks) {
+    tasks = JSON.parse(storedTasks);
+  }
+};
 
-  if (!newTaskId || !titulo || !descricao) {
-    return res.status(400).json({ message: 'ID, título e descrição são obrigatórios.' });
+exports.createTask = (req, res) => {
+  const { newTaskId, titulo, descricao, detalhes, columnId } = req.body;
+  console.log('Create Task:', newTaskId, titulo, descricao, detalhes, columnId);
+
+  if (!newTaskId || !titulo || !descricao || !columnId) {
+    return res.status(400).json({ message: 'ID, título, descrição e coluna são obrigatórios.' });
   }
 
-  const newTask = { newTaskId, titulo, descricao, detalhes };
+  const newTask = { newTaskId, titulo, descricao, detalhes, columnId };
   tasks.push(newTask);
 
   console.log('Tasks after creation:', tasks);
@@ -22,8 +29,8 @@ exports.getTasks = (req, res) => {
 };
 
 exports.updateTask = (req, res) => {
-  const { taskId, titulo, descricao, detalhes } = req.body;
-  console.log('Update Task:', taskId, titulo, descricao, detalhes);
+  const { taskId, titulo, descricao, detalhes, columnId } = req.body;
+  console.log('Update Task:', taskId, titulo, descricao, detalhes, columnId);
 
   const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
 
@@ -31,7 +38,7 @@ exports.updateTask = (req, res) => {
     return res.status(404).json({ message: 'Tarefa não encontrada.' });
   }
 
-  tasks[taskIndex] = { newTaskId: taskId, titulo, descricao, detalhes };
+  tasks[taskIndex] = { newTaskId: taskId, titulo, descricao, detalhes, columnId };
   console.log('Tasks after update:', tasks);
   return res.status(200).json({ message: 'Tarefa atualizada com sucesso.', task: tasks[taskIndex] });
 };
