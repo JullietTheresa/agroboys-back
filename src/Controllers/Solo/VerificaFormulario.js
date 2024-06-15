@@ -32,11 +32,8 @@ exports.EnviarDadosSolo = (req, res) => {
 
 // Endpoint para verificar se há formulário preenchido
 exports.VerificaFormulario = (req, res) => {
+    console.log("Entrou")
     const idDadosSolo = req.body.idDadosSolo;
-
-    if (!idDadosSolo) {
-        return res.status(400).json({ error: 'idDadosSolo é obrigatório' });
-    }
 
     // Contar quantos registros têm todos os campos relevantes como NULL para um idDadosSolo específico
     const query = `
@@ -55,6 +52,7 @@ exports.VerificaFormulario = (req, res) => {
           AND texturaSolo IS NULL`;
 
     conexao.query(query, lista[0], (error, results) => {
+        console.log("Entrou no bd")
         if (error) {
             console.error('Erro ao verificar formulário:', error);
             return res.status(500).json({ error: 'Erro interno do servidor' });
