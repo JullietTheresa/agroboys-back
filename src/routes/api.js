@@ -19,6 +19,7 @@ router.get('/confereRegiao', DadosRegiao.confereRegiao);
 router.post('/salvaSignup', DadosUsuario.salvaSignup);
 router.post('/verificaLogin', DadosUsuario.verificaLogin);
 router.get('/confereLogin', DadosUsuario.confereLogin);
+router.get('/enviaUsuario', DadosUsuario.enviaUsuario);
 
 router.post('/selecao_cultura', DadosCultura.selecao_cultura);
 router.get('/envia_cultura', DadosCultura.selecao_cultura);
