@@ -91,5 +91,15 @@ exports.confereLogin = (req, res) => {
       console.log("Usuario logado: ", lista[0]);
       return res.status(200).json({ message: 'Usuario logado', usuario: lista[0] }); // Envie uma resposta positiva
     }
-  };
-  
+};
+
+exports.enviaUsuario = (req, res) => {
+    conexao.query('select nomeUsuario from tb_usuario where idUsuario = ?;', lista[0], (error, results) => {
+        if (error) {
+          console.error("Erro ao buscar usuario.", error);
+          return res.status(500).json({ error: "Erro interno do servidor"});
+        }
+        console.log("Usuario encontrado", results);
+        return res.status(200).json(results);
+      });
+}
