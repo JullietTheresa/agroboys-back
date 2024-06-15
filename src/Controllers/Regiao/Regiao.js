@@ -43,3 +43,30 @@ exports.dadosEstado = (req, res) => {
         }
     });
 };
+
+// Endpoint para verificar se há formulário preenchido
+exports.confereRegiao = (req, res) => {
+    // Contar quantos registros têm todos os campos relevantes como NULL para um idDadosSolo específico
+    const query = `
+        SELECT COUNT(*) AS total 
+        FROM tb_regiao 
+        WHERE idRegião = ? 
+          AND cidade IS NULL
+          AND regiao IS NULL
+          AND bioma IS NULL`;
+
+    conexao.query(query, lista[0], (error, results) => {
+        if (error) {
+            console.error('Erro ao verificar região:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+        const total = results[0].total;
+        if (total === 0) {
+            console.log('Região preenchida');
+            return res.status(200).json({ message: 'Região preenchida' });
+        } else {
+            console.log('Região não preenchida');
+            return res.status(401).json({ error: 'Região não preenchida vazio' });
+        }
+    });
+};

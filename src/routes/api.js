@@ -14,9 +14,11 @@ router.get('/', (req, res) => {
 
 router.post('/confirmaestado', DadosRegiao.confirmaEstado);
 router.get('/dadosestado', DadosRegiao.dadosEstado);
+router.get('/confereRegiao', DadosRegiao.confereRegiao);
 
 router.post('/salvaSignup', DadosUsuario.salvaSignup);
 router.post('/verificaLogin', DadosUsuario.verificaLogin);
+router.get('/confereLogin', DadosUsuario.confereLogin);
 
 router.post('/selecao_cultura', DadosCultura.selecao_cultura);
 router.get('/envia_cultura', DadosCultura.selecao_cultura);
