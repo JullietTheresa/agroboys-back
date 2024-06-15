@@ -33,6 +33,7 @@ router.get('/controleGet', DadosControle.getTasks);
 router.put('/controle', DadosControle.updateTask);
 router.delete('/controle/:taskId', DadosControle.deleteTask);
 
-router.get('/GeracaoAI', AIController.Geracao);
+router.get('/geracaoAI', AIController.Geracao);
+router.get('/mostraTexto', AIController.mostraTexto)
 
 module.exports = router;
