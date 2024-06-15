@@ -82,3 +82,14 @@ exports.verificaLogin = (req, res) => {
         return res.status(200).json({ message: "Login bem-sucedido" });
     });
 };
+
+exports.confereLogin = (req, res) => {
+    if (lista.length === 0) {
+      console.log("Nenhum usuario logado.");
+      return res.status(401).json({ error: 'Nenhum usuario logado' }); // Use 401 para indicar que não está autorizado
+    } else {
+      console.log("Usuario logado: ", lista[0]);
+      return res.status(200).json({ message: 'Usuario logado', usuario: lista[0] }); // Envie uma resposta positiva
+    }
+  };
+  
