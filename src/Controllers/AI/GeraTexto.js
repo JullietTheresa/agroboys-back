@@ -1,3 +1,5 @@
+const plano = []
+
 const {
     GoogleGenerativeAI,
     HarmCategory,
@@ -32,10 +34,21 @@ exports.Geracao = async (req, res) => {
         const unwantedCharsRegex = /[*#]/g;
         const cleanText = text.replace(unwantedCharsRegex, '');
 
-        console.log(text);
+        plano.push(cleanText)
         console.log(cleanText);
+        res.status(200).json(cleanText)
     } catch (error) {
         console.error("Error generating content:", error);
         res.status(500).send("Internal Server Error");
     }
 };
+
+exports.mostraTexto = (req, res) => {
+    if (plano.length === 0) {
+        console.log("Nenhuma resposta armazenada.")
+        return res.status(500).json({ error: "Erro interno do servidor"});
+    } else {
+        console.log("Resposta encontrada.")
+        return res.status(200).json(plano[0]);
+    }
+}

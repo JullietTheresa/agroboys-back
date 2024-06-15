@@ -31,6 +31,7 @@ router.get('/EnviarDadosSolo', DadosSolo.EnviarDadosSolo);
 router.post('/controle', DadosControle.createTask)
 router.get('/controleGet'), DadosControle.getTasks
 
-router.get('/GeracaoAI', AIController.Geracao);
+router.get('/geracaoAI', AIController.Geracao);
+router.get('/mostraTexto', AIController.mostraTexto)
 
 module.exports = router;
