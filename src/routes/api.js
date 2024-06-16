@@ -32,6 +32,7 @@ router.post('/controle', DadosControle.createTask);
 router.get('/controleGet', DadosControle.getTasks);
 router.put('/controle', DadosControle.updateTask);
 router.delete('/controle/:taskId', DadosControle.deleteTask);
+router.post('/updateTaskColumn', DadosControle.updateTaskColumn);
 
 router.get('/geracaoAI', AIController.Geracao);
 router.get('/mostraTexto', AIController.mostraTexto)
