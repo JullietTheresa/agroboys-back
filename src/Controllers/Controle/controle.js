@@ -3,10 +3,29 @@ let tasks = [];
 
 exports.loadTasksFromLocalStorage = () => {
   const storedTasks = localStorage.getItem('tasks');
-  if (storedTasks) {
-    tasks = JSON.parse(storedTasks);
-  }
+  if (storedTasks) tasks = JSON.parse(storedTasks);
 };
+
+exports.updateTaskColumn = (req, res) => {
+  const { taskId, newColumnId } = req.body;
+
+  console.log('Update Task Column:', taskId, newColumnId);
+
+  if (!taskId || !newColumnId) {
+    return res.status(400).json({ message: 'ID da tarefa e nova coluna são obrigatórios.' });
+  }
+
+  const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
+  if (taskIndex === -1) {
+    return res.status(404).json({ message: 'Tarefa não encontrada.' });
+  }
+
+  tasks[taskIndex].columnId = newColumnId;
+
+  console.log('Tasks after column update:', tasks);
+  return res.status(200).json({ message: 'Coluna da tarefa atualizada com sucesso.', task: tasks[taskIndex] });
+};
+
 
 exports.createTask = (req, res) => {
   const { newTaskId, titulo, descricao, detalhes, columnId } = req.body;
@@ -33,7 +52,6 @@ exports.updateTask = (req, res) => {
   console.log('Update Task:', taskId, titulo, descricao, detalhes, columnId);
 
   const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
-
   if (taskIndex === -1) {
     return res.status(404).json({ message: 'Tarefa não encontrada.' });
   }
@@ -48,11 +66,9 @@ exports.deleteTask = (req, res) => {
   console.log('Delete Task:', taskId);
 
   const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
-
   if (taskIndex === -1) {
     return res.status(404).json({ message: 'Tarefa não encontrada.' });
   }
-
   tasks.splice(taskIndex, 1);
   console.log('Tasks after deletion:', tasks);
   return res.status(200).json({ message: 'Tarefa deletada com sucesso.' });
