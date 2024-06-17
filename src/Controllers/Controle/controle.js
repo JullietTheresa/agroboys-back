@@ -27,9 +27,6 @@ exports.updateTaskColumn = (req, res) => {
   return res.status(200).json({ message: 'Coluna da tarefa atualizada com sucesso.', task: tasks[taskIndex] });
 };
 
-
-
-
 exports.createTask = (req, res) => {
   const { newTaskId, titulo, descricao, detalhes, columnId } = req.body;
   console.log('Create Task:', newTaskId, titulo, descricao, detalhes, columnId);
@@ -60,25 +57,39 @@ exports.updateTask = (req, res) => {
   const { taskId, titulo, descricao, detalhes, columnId } = req.body;
   console.log('Update Task:', taskId, titulo, descricao, detalhes, columnId);
 
-  const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
-  if (taskIndex === -1) {
-    return res.status(404).json({ message: 'Tarefa não encontrada.' });
+  if (!taskId || !titulo || !descricao || !columnId) {
+    return res.status(400).json({ message: 'ID, título, descrição e coluna são obrigatórios.' });
   }
 
-  tasks[taskIndex] = { newTaskId: taskId, titulo, descricao, detalhes, columnId };
-  console.log('Tasks after update:', tasks);
-  return res.status(200).json({ message: 'Tarefa atualizada com sucesso.', task: tasks[taskIndex] });
+  const query = 'UPDATE tb_tarefa SET titulo = ?, descricao = ?, detalhes = ?, coluna = ? WHERE idTarefa = ?';
+  conexao.query(query, [titulo, descricao, detalhes, columnId, taskId], (err, result) => {
+    if (err) {
+      console.error('Erro ao atualizar tarefa:', err);
+      res.status(500).json({ error: 'Erro ao atualizar tarefa' });
+    } else {
+      const updatedTask = { taskId, titulo, descricao, detalhes, columnId };
+      console.log('Tasks after update:', updatedTask);
+      res.status(200).json({ message: 'Tarefa atualizada com sucesso.', task: updatedTask });
+    }
+  });
 };
 
 exports.deleteTask = (req, res) => {
   const { taskId } = req.params;
   console.log('Delete Task:', taskId);
 
-  const taskIndex = tasks.findIndex(task => task.newTaskId === taskId);
-  if (taskIndex === -1) {
+  if (taskId === -1) {
     return res.status(404).json({ message: 'Tarefa não encontrada.' });
   }
-  tasks.splice(taskIndex, 1);
-  console.log('Tasks after deletion:', tasks);
-  return res.status(200).json({ message: 'Tarefa deletada com sucesso.' });
+
+  const query = 'DELETE FROM tb_tarefa WHERE idTarefa = ?';
+  conexao.query(query, [taskId], (err, result) => {
+    if (err) {
+      console.error('Erro ao deletar tarefa:', err);
+      res.status(500).json({ error: 'Erro ao deletar tarefa' });
+    } else {
+      console.log('Tasks after deletion:', taskId);
+      res.status(200).json({ message: 'Tarefa deletada com sucesso.' });
+    }
+  });
 };
