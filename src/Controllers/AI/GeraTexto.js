@@ -54,9 +54,22 @@ exports.Geracao = async (req, res) => {
 
         const { ph, fertilidade, nutrientes, saturacao, materiaOrganica, salinidade, porcentArgila, porcentSilt, porcentAreia, texturaSolo } = dadosSolo;
 
-        const prompt = `Quero plantar ${cultura}.\n\nInformações:\nPH: ${ph}\nFertilidade: ${fertilidade}\nSaturação: ${saturacao}\nMateria Organica: ${materiaOrganica}%\nSalinidade: ${salinidade}%\nPorcentagem de argila: ${porcentArgila}%\nPorcentagem de silte: ${porcentSilt}%\nPorcentagem de Areia: ${porcentAreia}%\nTextura do solo: ${texturaSolo}\nMês: Junho\nEstado: Brasilia`;
+        const estadoSQL = await new Promise((resolve, reject) => {
+            conexao.query('SELECT cidade FROM tb_regiao WHERE idRegião = ?', lista[0], (error, results) => {
+                if (error) {
+                    console.error('Erro ao enviar dados do estado:', error);
+                    return reject("Erro interno do servidor");
+                }
+                console.log('Dados chamados:', results);
+                resolve(results[0]);
+            });
+        });
 
-        console.log("Aguardando resposta");
+        const estado = estadoSQL.cidade
+
+        const prompt = `Quero plantar ${cultura}.\n\nInformações:\nPH: ${ph}\nFertilidade: ${fertilidade}\nSaturação: ${saturacao}\nMateria Organica: ${materiaOrganica}%\nSalinidade: ${salinidade}%\nPorcentagem de argila: ${porcentArgila}%\nPorcentagem de silte: ${porcentSilt}%\nPorcentagem de Areia: ${porcentAreia}%\nTextura do solo: ${texturaSolo}\nMês: Junho\nEstado: ${estado}`;
+
+        console.log("Aguardando resposta do prompt: ", prompt);
 
         const result = await model.generateContent(prompt);
         const response = await result.response;

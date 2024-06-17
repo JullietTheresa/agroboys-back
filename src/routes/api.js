@@ -42,6 +42,7 @@ router.get('/mostraTexto', AIController.mostraTexto);
 
 router.get('/salvaHistorico', DadosHistorico.salvaHistorico);
 router.get('/enviaHistorico', DadosHistorico.enviaHistorico);
+router.get('/historicoAI/:index', DadosHistorico.aiHistorico);
 
 router.post('/controleDB', controleBD.createTaskDB);
 router.get('/controleGetBD', controleBD.getTasksDB)

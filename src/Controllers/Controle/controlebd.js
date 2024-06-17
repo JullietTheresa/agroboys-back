@@ -13,7 +13,7 @@ exports.createTaskDB = (req, res) => {
     
     const usuarioId = lista[0];
 
-    const countTasksSql = 'SELECT MAX(newTaskId) as maior FROM tb_tarefa';
+    const countTasksSql = 'SELECT MAX(newTaskId) as maior FROM tb_tarefa WHERE usuario_id = ?';
     conexao.query(countTasksSql, usuarioId, (error, results) => {
         if (error) {
             console.error('Erro ao procurar número de tarefas criadas:', error);

@@ -36,8 +36,6 @@ exports.salvaSignup = (req, res) => {
             const queryAI = 'INSERT INTO tb_ai () VALUES ()'
             conexao.query(queryAI)
 
-            const queryHistorico = 'INSERT INTO tb_historicoplantio () VALUES ()'
-            conexao.query(queryHistorico)
             console.log('Usuário cadastrado com sucesso:', results);
             return res.status(201).json({ message: 'Usuário cadastrado com sucesso.' });
         });
