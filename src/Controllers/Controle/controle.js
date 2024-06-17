@@ -1,3 +1,4 @@
+const conexao = require('../../db');
 // Função para criar uma nova tarefa
 let tasks = [];
 
@@ -27,6 +28,8 @@ exports.updateTaskColumn = (req, res) => {
 };
 
 
+
+
 exports.createTask = (req, res) => {
   const { newTaskId, titulo, descricao, detalhes, columnId } = req.body;
   console.log('Create Task:', newTaskId, titulo, descricao, detalhes, columnId);
@@ -35,11 +38,17 @@ exports.createTask = (req, res) => {
     return res.status(400).json({ message: 'ID, título, descrição e coluna são obrigatórios.' });
   }
 
-  const newTask = { newTaskId, titulo, descricao, detalhes, columnId };
-  tasks.push(newTask);
-
-  console.log('Tasks after creation:', tasks);
-  return res.status(201).json({ message: 'Tarefa criada com sucesso.', task: newTask });
+  const query = 'INSERT INTO tb_tarefa (idTarefa, titulo, descricao, detalhes, coluna) VALUES (?, ?, ?, ?, ?)';
+  conexao.query(query, [newTaskId, titulo, descricao, detalhes, columnId], (err, result) => {
+    if (err) {
+      console.error('Erro ao criar tarefa:', err);
+      res.status(500).json({ error: 'Erro ao criar tarefa' });
+    } else {
+      const newTask = { newTaskId: result.insertId, titulo, descricao, detalhes, columnId };
+      console.log('Tasks after creation:', newTask);
+      res.status(201).json({ message: 'Tarefa criada com sucesso.', task: newTask });
+    }
+  });
 };
 
 exports.getTasks = (req, res) => {
