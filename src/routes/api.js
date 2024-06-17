@@ -7,6 +7,7 @@ const DadosCultura = require('../Controllers/selecao_cultura/cultura');
 const DadosSolo = require('../Controllers/Solo/VerificaFormulario');
 const DadosControle = require('../Controllers/Controle/controle');
 const AIController = require('../Controllers/AI/GeraTexto');
+const DadosHistorico = require('../Controllers/Historico/historico');
 
 router.get('/', (req, res) => {
     res.send("API GET");
@@ -35,6 +36,8 @@ router.delete('/controle/:taskId', DadosControle.deleteTask);
 router.post('/updateTaskColumn', DadosControle.updateTaskColumn);
 
 router.get('/geracaoAI', AIController.Geracao);
-router.get('/mostraTexto', AIController.mostraTexto)
+router.get('/mostraTexto', AIController.mostraTexto);
+
+router.get('/salvaHistorico', DadosHistorico.salvaHistorico);
 
 module.exports = router;

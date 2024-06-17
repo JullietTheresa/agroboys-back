@@ -11,8 +11,8 @@ const {
 const genAI = new GoogleGenerativeAI("AIzaSyBl6_Mr_IMMc7HbyCxbusAmkxYcZ8fgefU");
 
 const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    systemInstruction: "Você é um especialista em plantações brasileiras e vai ajudar um usuário que possui um grupo de informações, essas informações são:\n\nPlanta que o usuário quer plantar:\nPH:\nFertilidade:\nSaturação:\nMateria Organica:\nSalinidade:\nPorcentagem de argila:\nPorcentagem de silte:\nPorcentagem de Areia:\nTextura do solo:\nMês:\nEstado:\n\nEste usuário quer uma analise seguindo as seguintes instruções:\n\nFaça uma analise  do estado para descobrir estação e temperatura media de acordo com o mes\nAnalisando as informações você ira fazer uma rotação de cultura que se adeque a {Planta que o usuário quer plantar}, caso o solo ou a estação não seja adequada para o plantio da {Planta que o usuário quer plantar} comece a rotação de cultura com uma planta que ira melhorar o solo para a {Planta que o usuário quer plantar}.\n\nCaso a estação não seja a ideal para plantar a {Planta que o usuário quer plantar} altere a rotação de cultura para se adequar a época.\n\nSua resposta deve ser APENAS no seguinte modelo e não poderá sair dele de forma alguma, ( Não escreva oque está entre () ):\n\nCoisas que não deve conter de modo algum na resposta:\nSeparar Rotação de cultura por ano,\nDeixar alguma informação vazia\n\nPlano de plantio para {Planta que o usuário quer plantar}:\n\n(Dicas do solo) Solo: \n\n(Dicas da Estação/Região) Estação/Região: \n\n(Ao final escreva, repita) Rotação de cultura: \n\n(2 a 3 Pragas mais comum / Melhor Agrotóxico para ela) Pragas: \n\nAlertas: ",
+    model: "gemini-1.5-pro",
+    systemInstruction: "\"You are an expert in Brazilian plantations and will assist a user who has a group of information. These pieces of information are:\n\nPlanta que o usuário quer plantar:\nPH:\nFertilidade\nSaturação:\nMateria Organica:\nSalinidade:\nPorcentagem de argila:\nPorcentagem de silte:\nPorcentagem de Areia:\nTextura do solo:\nMês:\\nEstado:\n\nThis user wants an analysis following these instructions:\n\nConduct a state analysis to discover the season and average temperature according to the month. Based on the information, you will create a crop rotation plan that is suitable for {Plant the user wants to plant}. If the soil or season is not suitable for planting {Plant the user wants to plant}, start the crop rotation with a plant that will improve the soil for {Plant the user wants to plant}.\n\nIf the season is not ideal for planting {Plant the user wants to plant}, adjust the crop rotation to suit the appropriate time.\n\nYour response must be in the following format ONLY, and you must not deviate from it in any way (Do not write what is in parentheses):\n\nThings that should not be included in any way in the response:\nSeparating crop rotation by year,\nLeaving any information blank,\n\nPlano de plantio para {Planta que o usuário quer plantar}: \n\n(Tips for soil) - Solo: \n\n(Tips for the season/region) - Estação/Região: \n\n(Tips for the season/region. Repeat.) - Rotação de cultura: \n\n(2 to 3 most common pests / Best pesticide for them.) - Pragas: \n\n(Useful information that the user needs to be aware)- Alertas: \"",
 });
 
 const generationConfig = {
@@ -25,7 +25,6 @@ responseMimeType: "text/plain",
 
 exports.Geracao = async (req, res) => {
     console.log("Chamou dados da planta.");
-
     try {
         // Consultar dados no banco de dados para cultura
         const cultura = await new Promise((resolve, reject) => {
@@ -66,9 +65,23 @@ exports.Geracao = async (req, res) => {
         const unwantedCharsRegex = /[*#]/g;
         const cleanText = text.replace(unwantedCharsRegex, '');
 
-        plano.push(cleanText);
-        console.log(cleanText);
-        res.status(200).json(cleanText);
+        const updateAI = `
+        UPDATE tb_ai
+        SET AI_Text = ?
+        WHERE id = ?`;
+    
+        const values = [cleanText, lista[0]];
+
+        // Inserir dados no banco de dados
+        conexao.query(updateAI, values, (error, results) => {
+            if (error) {
+                console.error('Erro ao salvar texto da AI:', error);
+                return res.status(500).json({ error: 'Erro interno do servidor' });
+            }
+            console.log('Texto da AI armazenado com sucesso:', { cleanText });
+            return res.status(200).json(cleanText);
+        });
+
     } catch (error) {
         console.error("Error generating content:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -76,12 +89,38 @@ exports.Geracao = async (req, res) => {
 };
 
 
+
 exports.mostraTexto = (req, res) => {
-    if (plano.length === 0) {
-        console.log("Nenhuma resposta armazenada.")
-        return res.status(500).json({ error: "Erro interno do servidor"});
-    } else {
-        console.log("Resposta encontrada.")
-        return res.status(200).json(plano[0]);
-    }
-}
+    const query = `
+    SELECT COUNT(*) AS total 
+    FROM tb_ai
+    WHERE id = ? 
+      AND AI_Text IS NULL`;
+
+    conexao.query(query, lista[0], (error, results) => {
+        if (error) {
+            console.error('Erro ao verificar bd:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+        const total = results[0].total;
+        if (total !== 0) {
+            console.log("Nenhum texto salvo.");
+            return res.status(500).json({ error: "Erro interno do servidor" });
+        } else {
+            conexao.query('SELECT AI_Text FROM tb_ai WHERE id = ?', lista[0], (error, results) => {
+                if (error) {
+                    console.error('Erro ao enviar dados do AI text.', error);
+                    return res.status(500).json({ error: 'Erro interno do servidor' });
+                } else {
+                    if (results.length === 0) {
+                        console.log("Nenhuma resposta armazenada.");
+                        return res.status(500).json({ error: "Erro interno do servidor" });
+                    } else {
+                        console.log("Texto da AI enviado, ", results);
+                        return res.status(200).json(results[0]);
+                    }
+                }
+            });
+        }
+    });
+};
