@@ -1,3 +1,5 @@
+const conexao = require('../../db');
+const { lista } = require('../Usuario/id');
 const plano = []
 
 const {
@@ -22,11 +24,41 @@ responseMimeType: "text/plain",
 };
 
 exports.Geracao = async (req, res) => {
-    console.log("Chamou");
+    console.log("Chamou dados da planta.");
+
     try {
-        const prompt = "Quero plantar milho.\n\nInformações:\nPH: 4\nFertilidade: Alta\nSaturação: Bem drenado\nMateria Organica: 4.8%\nSalinidade: 2%\nPorcentagem de argila: 20%\nPorcentagem de silte: 10%\nPorcentagem de Areia: 30%\nTextura do solo: Argiloso pesado\nMês: Junho\nEstado: Brasilia"
+        // Consultar dados no banco de dados para cultura
+        const cultura = await new Promise((resolve, reject) => {
+            conexao.query('SELECT nomeCultura FROM tb_cultura WHERE idCultura = ?', lista[0], (error, results) => {
+                if (error) {
+                    console.error("Erro ao buscar cultura, ou cultura não selecionada.", error);
+                    return reject("Erro interno do servidor");
+                }
+                console.log("Dado buscado com sucesso", results);
+                resolve(results[0].nomeCultura);
+            });
+        });
+
+        console.log("Chamou dados do solo.");
+        
+        // Consultar dados no banco de dados para dados do solo
+        const dadosSolo = await new Promise((resolve, reject) => {
+            conexao.query('SELECT * FROM tb_dadossolo WHERE idDadosSolo = ?', lista[0], (error, results) => {
+                if (error) {
+                    console.error('Erro ao enviar dados do solo:', error);
+                    return reject("Erro interno do servidor");
+                }
+                console.log('Dados chamados:', results);
+                resolve(results[0]);
+            });
+        });
+
+        const { ph, fertilidade, nutrientes, saturacao, materiaOrganica, salinidade, porcentArgila, porcentSilt, porcentAreia, texturaSolo } = dadosSolo;
+
+        const prompt = `Quero plantar ${cultura}.\n\nInformações:\nPH: ${ph}\nFertilidade: ${fertilidade}\nSaturação: ${saturacao}\nMateria Organica: ${materiaOrganica}%\nSalinidade: ${salinidade}%\nPorcentagem de argila: ${porcentArgila}%\nPorcentagem de silte: ${porcentSilt}%\nPorcentagem de Areia: ${porcentAreia}%\nTextura do solo: ${texturaSolo}\nMês: Junho\nEstado: Brasilia`;
 
         console.log("Aguardando resposta");
+
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = await response.text();
@@ -34,14 +66,15 @@ exports.Geracao = async (req, res) => {
         const unwantedCharsRegex = /[*#]/g;
         const cleanText = text.replace(unwantedCharsRegex, '');
 
-        plano.push(cleanText)
+        plano.push(cleanText);
         console.log(cleanText);
-        res.status(200).json(cleanText)
+        res.status(200).json(cleanText);
     } catch (error) {
         console.error("Error generating content:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 exports.mostraTexto = (req, res) => {
     if (plano.length === 0) {
