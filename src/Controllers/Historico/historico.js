@@ -30,3 +30,15 @@ exports.salvaHistorico = (req, res) => {
       });
   });
 }
+
+exports.enviaHistorico = (req, res) => {
+  conexao.query('SELECT NomeCultura, ImagemCultura, Situacao, TextoAI from tb_historicoplantio WHERE idHistorico = ?', lista[0], (error, results) => {
+    if (error) {
+      console.error('Erro ao executar a consulta:', error);
+      res.status(500).json({ error: 'Erro interno no servidor' });
+    } else {
+      console.log("Dados enviados com sucesso: ", results)
+      res.json(results);
+    }
+  });
+};

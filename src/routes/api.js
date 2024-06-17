@@ -39,5 +39,6 @@ router.get('/geracaoAI', AIController.Geracao);
 router.get('/mostraTexto', AIController.mostraTexto);
 
 router.get('/salvaHistorico', DadosHistorico.salvaHistorico);
+router.get('/enviaHistorico', DadosHistorico.enviaHistorico);
 
 module.exports = router;
