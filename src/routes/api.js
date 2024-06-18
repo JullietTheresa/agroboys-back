@@ -25,11 +25,13 @@ router.get('/confereLogin', DadosUsuario.confereLogin);
 router.get('/enviaUsuario', DadosUsuario.enviaUsuario);
 
 router.post('/selecao_cultura', DadosCultura.selecao_cultura);
-router.get('/envia_cultura', DadosCultura.selecao_cultura);
+router.get('/envia_cultura', DadosCultura.envia_cultura);
+router.get('/lipaCultura', DadosCultura.limpaCultura);
 
 router.get('/VerificaFormulario', DadosSolo.VerificaFormulario);
 router.post('/SalvaFormulario', DadosSolo.SalvaFormulario);
 router.get('/EnviarDadosSolo', DadosSolo.EnviarDadosSolo);
+router.get('/limpaDados', DadosSolo.limpaDados);
 
 router.post('/controle', DadosControle.createTask);
 router.get('/controleGet', DadosControle.getTasks);

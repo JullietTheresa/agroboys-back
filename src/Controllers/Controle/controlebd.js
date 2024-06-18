@@ -70,7 +70,11 @@ exports.getTasksDB = (req, res) => {
 };
 
 exports.updateTaskColumnDB = (req, res) => {
-    const { taskId, newColumnId } = req.body;
+    let { taskId, newColumnId } = req.body;
+    
+    if (taskId > 10) {
+        taskId = Math.round(taskId / 10)
+    }
   
     console.log('Update Task Column:', taskId, newColumnId);
   
@@ -92,7 +96,11 @@ exports.updateTaskColumnDB = (req, res) => {
 };
 
 exports.updateTaskDB = (req, res) => {
-    const { taskId, titulo, descricao, detalhes } = req.body;
+    let { taskId, titulo, descricao, detalhes } = req.body;
+
+    if (taskId > 10) {
+        taskId = Math.round(taskId / 10)
+    }
     console.log('Update Task:', taskId, titulo, descricao, detalhes);
 
     const updateTaskSQL = 'UPDATE tb_tarefa SET titulo = ?, descricao = ?, detalhes = ? WHERE usuario_id = ? AND newTaskId = ?'
@@ -109,9 +117,11 @@ exports.updateTaskDB = (req, res) => {
 };
 
 exports.deleteTaskBD = (req, res) => {
-    const { taskId } = req.params;
+    let { taskId } = req.params;
+    if (taskId > 10) {
+        taskId = Math.round(taskId / 10)
+    }
     console.log('Delete Task:', taskId);
-
     const deleteSQL = 'DELETE from tb_tarefa WHERE usuario_id = ? AND newTaskId = ?'
 
     conexao.query(deleteSQL, [lista[0], taskId], (error, results) => {

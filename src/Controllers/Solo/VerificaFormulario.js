@@ -68,3 +68,27 @@ exports.VerificaFormulario = (req, res) => {
     });
 };
 
+exports.limpaDados = (req, res) => {
+    const limpaSQL = `UPDATE tb_dadossolo
+    SET ph = NULL,
+    fertilidade = NULL,
+    nutrientes = NULL,
+    saturacao = NULL,
+    materiaOrganica = NULL,
+    salinidade = NULL,
+    porcentArgila = NULL,
+    porcentSilt = NULL,
+    porcentAreia = NULL,
+    texturaSolo = NULL
+    WHERE idDadosSolo = ?;`
+
+    conexao.query(limpaSQL, lista[0], (error, results) => {
+        if (error) {
+            console.log("Erro ao limpar formulario")
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        } else {
+            console.log("Formulario limpo com sucesso.")
+            return res.status(200).json({ message: 'Formulário Limpo' });
+        }
+    })
+}

@@ -24,7 +24,7 @@ exports.selecao_cultura = (req, res) => {
 
 exports.envia_cultura = (req, res) => {
   conexao.query('SELECT * FROM tb_cultura WHERE idCultura = ?', lista[0], (error, results) => {
-    if (erro) {
+    if (error) {
       console.error("Erro ao buscar cultura, ou cultura não selecionada.", error);
       return res.status(500).json({ error: "Erro interno do servidor"});
     }
@@ -33,3 +33,20 @@ exports.envia_cultura = (req, res) => {
   });
 }
 
+exports.limpaCultura = (req, res) => {
+  const limpaSQL = `UPDATE tb_cultura
+  SET nomeCultura = NULL,
+  nomeImagem = NULL,
+  descricao = NULL
+  WHERE idCultura = ?;`
+
+  conexao.query(limpaSQL, lista[0], (error, results) => {
+      if (error) {
+          console.log("Erro ao limpar cultura")
+          return res.status(500).json({ error: 'Erro interno do servidor' });
+      } else {
+          console.log("Cultura limpa com sucesso.")
+          return res.status(200).json({ message: 'Formulário Limpo' });
+      }
+  })
+}
